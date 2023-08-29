@@ -1,2 +1,3 @@
 # trie
-Trie data structure implementation in C and Python respectively
+
+Trie data structure implementation in C++ and Python respectively.
