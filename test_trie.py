@@ -40,7 +40,7 @@ assert t.word_size == 0
 
 # stress test
 t = Trie()
-n = 100
+n = 1000
 for i in range(n):
     s = ''.join(str(random.randint(0,999)) for i in range(100))
     t.insert(s)
@@ -48,7 +48,7 @@ for i in range(n):
 words = t.startswith('')
 assert len(words) == t.word_size
 
-ks = ['1','2','3','4','5','6','7','8','9']
+ks = ('1','2','3','4','5','6','7','8','9')
 for k in ks:
     num = sum(1 for w in words if w.startswith(k))
     assert num == len(t.startswith(k))
