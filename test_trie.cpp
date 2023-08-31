@@ -2,6 +2,9 @@
 #include <iostream>
 #include <cassert>
 #include <algorithm>
+#include <ctime>
+#include <cstdlib>
+#include <string>
 using namespace std;
 
 
@@ -86,8 +89,35 @@ void test_1(){
 }
 
 
+void test_2(){
+    time_t tm;
+    time(&tm);
+    srand((unsigned int)(tm%0xFFFFFFFF));
+
+    Trie t {};
+    for(int i{}; i<100000; ++i){
+        string s { to_string(rand()) };
+        t.insert(s);
+        HOPE_TRUE(t.query(s));
+    }
+
+    vector<string> words;
+    t.startswith("", words);
+    HOPE_EQ(t.word_size, words.size());
+
+    sort(words.begin(), words.end());
+    for(auto &w: words){
+        t.remove(w);
+        HOPE_FALSE(t.query(w));
+    }
+    HOPE_EQ(t.word_size, 0);
+    HOPE_EQ(t.node_size, 0);
+}
+
+
 int main() {
     test_1();
+    test_2();
     return 0;
 }
 

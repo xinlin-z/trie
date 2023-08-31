@@ -1,4 +1,5 @@
 import random
+random.seed()
 from trie import Trie
 
 
