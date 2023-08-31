@@ -1,6 +1,7 @@
 #include "trie.h"
 #include <iostream>
 #include <cassert>
+#include <algorithm>
 using namespace std;
 
 
@@ -35,15 +36,14 @@ void test_1(){
     
     vector<string> words;
     t.startswith("a", words);
-    cout << "start:" << endl;
-    for(auto w{words.begin()}; w!=words.end(); ++w)
-        cout << *w << " ";
-    cout << endl;
+    sort(words.begin(), words.end());
+    vector<string> words_2 {"ab","abc","abcd"};
+    HOPE_EQ(words, words_2);
     words.clear();
     t.startswith("", words);
-    for(auto w{words.begin()}; w!=words.end(); ++w)
-        cout << *w << " ";
-    cout << endl;
+    sort(words.begin(), words.end());
+    words_2.insert(words_2.begin(), "123");
+    HOPE_EQ(words, words_2);
 
     HOPE_TRUE(t.query("ab"));
     HOPE_TRUE(t.query("abc"));
