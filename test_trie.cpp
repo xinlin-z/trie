@@ -4,7 +4,28 @@
 using namespace std;
 
 
-int main() {
+#define HOPE_TRUE(a) \
+    do{ \
+        if(!a)\
+            cerr << "TRUE FAILED: " << __FILE__ << ": " << __LINE__ << endl;\
+    } while(0);
+
+
+#define HOPE_FALSE(a) \
+    do{ \
+        if(a)\
+            cerr << "FALSE FAILED: " << __FILE__ << ": " << __LINE__ << endl;\
+    } while(0);
+
+
+#define HOPE_EQ(a,b) \
+    do {\
+        if(a != b)\
+            cerr << "EQ FAILED: " << __FILE__ << ": " << __LINE__ << endl;\
+    } while(0);
+
+
+void test_1(){
     Trie t;
     t.insert("ab");
     t.insert("abc");
@@ -24,43 +45,49 @@ int main() {
         cout << *w << " ";
     cout << endl;
 
-    assert(t.query("ab"));
-    assert(t.query("abc"));
-    assert(t.query("abcd"));
-    assert(!t.query("a"));
-    assert(t.query("123"));
-    assert(!t.query("1234"));
-    assert(t.word_size == 4);
-    assert(t.node_size == 7);
+    HOPE_TRUE(t.query("ab"));
+    HOPE_TRUE(t.query("abc"));
+    HOPE_TRUE(t.query("abcd"));
+    HOPE_FALSE(t.query("a"));
+    HOPE_TRUE(t.query("123"));
+    HOPE_FALSE(t.query("1234"));
+    HOPE_EQ(t.word_size, 4);
+    HOPE_EQ(t.node_size, 7);
+
     t.remove("abc");
-    assert(!t.query("abc"));
-    assert(t.word_size == 3);
-    assert(t.node_size == 7);
+    HOPE_FALSE(t.query("abc"));
+    HOPE_EQ(t.word_size, 3);
+    HOPE_EQ(t.node_size, 7);
     t.remove("abcd");
-    assert(!t.query("abcd"));
-    assert(t.word_size == 2);
-    assert(t.node_size == 5);
+    HOPE_FALSE(t.query("abcd"));
+    HOPE_EQ(t.word_size, 2);
+    HOPE_EQ(t.node_size, 5);
     t.remove("ab");
-    assert(!t.query("ab"));
-    assert(t.word_size == 1);
-    assert(t.node_size == 3);
+    HOPE_FALSE(t.query("ab"));
+    HOPE_EQ(t.word_size, 1);
+    HOPE_EQ(t.node_size, 3);
     t.insert("f");
-    assert(t.query("f"));
-    assert(t.word_size == 2);
-    assert(t.node_size == 4);
+    HOPE_TRUE(t.query("f"));
+    HOPE_EQ(t.word_size, 2);
+    HOPE_EQ(t.node_size, 4);
     t.remove("f");
-    assert(!t.query("f"));
-    assert(t.word_size == 1);
-    assert(t.node_size == 3);
+    HOPE_FALSE(t.query("f"));
+    HOPE_EQ(t.word_size, 1);
+    HOPE_EQ(t.node_size, 3);
     t.remove("kkk");
-    assert(t.word_size == 1);
-    assert(t.node_size == 3);
+    HOPE_EQ(t.word_size, 1);
+    HOPE_EQ(t.node_size, 3);
     t.remove("123");
-    assert(!t.query("123"));
-    assert(t.word_size == 0);
-    assert(t.node_size == 0);
-    assert(t.root.nexts.empty());
+    HOPE_FALSE(t.query("123"));
+    HOPE_EQ(t.word_size, 0);
+    HOPE_EQ(t.node_size, 0);
+    HOPE_TRUE(t.root.nexts.empty());
     cout << "Test OK!\n";
+}
+
+
+int main() {
+    test_1();
     return 0;
 }
 
