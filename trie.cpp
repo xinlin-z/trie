@@ -5,7 +5,7 @@ using namespace std;
 
 pair<Trie::Node*,uint32_t> Trie::get_mem(){
     if(avail_slot.size() == 0){
-        Node* pm { (Node*)(new char[nslot*sizeof(Node)]) };
+        Node *pm { (Node*)(new char[nslot*sizeof(Node)]) };
         mem.push_back(pm);
         uint32_t msize { (uint32_t)mem.size() };
         for(uint32_t i{(msize-1)*nslot+1}; i<msize*nslot; ++i)
@@ -135,7 +135,7 @@ void Trie::startswith(string prefix, vector<string> &words){
             if(pn->is_word)
                 words.push_back(s);
         }
-        states.assign(m.begin(), m.end());
+        swap(states, m);
     }
 }
 
