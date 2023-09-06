@@ -7,6 +7,10 @@
 #include <utility>
 
 
+// memory allocated for each new
+#define MEM_PIECE  (4096*4)
+
+
 struct Trie{
     struct Node{
         using mt = std::unordered_map<char,Node*>;
@@ -32,7 +36,7 @@ struct Trie{
     std::string lcp() noexcept;
 
     // memory pool
-    const static uint32_t nslot { 4096/sizeof(Node) }; // 64
+    const static uint32_t nslot { MEM_PIECE/sizeof(Node) };
     std::vector<Node*> mem;
     std::deque<uint32_t> avail_slot;
     std::pair<Node*,uint32_t> get_mem();
