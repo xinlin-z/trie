@@ -5,7 +5,7 @@ using namespace std;
 
 pair<Trie::Node*,uint32_t> Trie::get_mem(){
     if(avail_slot.size() == 0){
-        Node* pm{(Node*)(new char[nslot*sizeof(Node)]{})};
+        Node* pm { (Node*)(new char[nslot*sizeof(Node)]) };
         mem.push_back(pm);
         uint32_t msize { (uint32_t)mem.size() };
         for(uint32_t i{(msize-1)*nslot+1}; i<msize*nslot; ++i)
@@ -32,7 +32,9 @@ void Trie::insert(string s){
     Node *n {&root};
     for(auto c: s){
         if(n->nexts.find(c) == n->nexts.end()){
-            n->nexts[c] = new Node{c};
+            auto [p,sidx] { get_mem() };
+            n->nexts[c] = new(p) Node{c};
+            n->nexts[c]->sidx = sidx;
             ++node_size;
         }
         n = n->nexts[c];
@@ -82,7 +84,8 @@ void Trie::remove(string s){
     }
 
     // if it is leaf node
-    delete n;
+    del_mem(n->sidx);
+    //delete n;
     --node_size;
 
     // delete nodes until the first non-leaf
@@ -98,7 +101,8 @@ void Trie::remove(string s){
             return;
         }
         else{
-            delete n;
+            //delete n;
+            del_mem(n->sidx);
             --node_size;
         }
 
@@ -151,13 +155,15 @@ string Trie::lcp() noexcept{  // longest common prefix
 
 
 Trie::~Trie(){
-    vector<string> words;
+    /*vector<string> words;
     words.reserve(word_size);
     startswith("", words);
     for(auto &w: words)
         remove(w);
     assert(word_size == 0);
-    assert(node_size == 0);
+    assert(node_size == 0);*/
+    for(auto it{mem.begin()}; it!=mem.end(); ++it)
+        delete *it;
 }
 
 
