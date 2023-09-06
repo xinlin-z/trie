@@ -6,8 +6,8 @@ To test on Linux:
 
 ```shell
 $ make          # test all
-$ make testcpp  # test c++ version
-$ make testpy   # test python version
+$ make testcpp  # test C++ version
+$ make testpy   # test Python version
 ```
 
 if no FAILED, it's passed!
