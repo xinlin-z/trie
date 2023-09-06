@@ -3,6 +3,29 @@
 using namespace std;
 
 
+pair<Trie::Node*,uint32_t> Trie::get_mem(){
+    if(avail_slot.size() == 0){
+        Node* pm{(Node*)(new char[nslot*sizeof(Node)]{})};
+        mem.push_back(pm);
+        uint32_t msize { (uint32_t)mem.size() };
+        for(uint32_t i{(msize-1)*nslot+1}; i<msize*nslot; ++i)
+            avail_slot.push_back(i);
+        return {pm, (msize-1)*nslot};
+    }
+    
+    uint32_t s { avail_slot[0] };
+    uint32_t a { s/nslot };
+    uint32_t b { s%nslot };
+    avail_slot.pop_front();
+    return {mem[a]+b, s};
+}
+
+
+void Trie::del_mem(uint32_t sidx){
+    avail_slot.push_back(sidx);
+}
+
+
 void Trie::insert(string s){
     if((s=="") || query(s))
         return;
