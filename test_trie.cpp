@@ -36,7 +36,7 @@ void test_1(){
     t.insert("abcd");
     assert(t.lcp() == "ab");
     t.insert("123");
-    
+
     vector<string> words;
     t.startswith("a", words);
     sort(words.begin(), words.end());
@@ -85,7 +85,6 @@ void test_1(){
     HOPE_EQ(t.word_size, 0);
     HOPE_EQ(t.node_size, 0);
     HOPE_TRUE(t.root.nexts.empty());
-    cout << "Test OK!\n";
 }
 
 
@@ -112,12 +111,53 @@ void test_2(){
     }
     HOPE_EQ(t.word_size, 0);
     HOPE_EQ(t.node_size, 0);
+    HOPE_TRUE(t.root.nexts.empty());
+}
+
+
+void test_3(){
+    time_t tm;
+    time(&tm);
+    srand((unsigned int)(tm%0xFFFFFFFF));
+
+    Trie t {};
+    for(int i{}; i<100000; ++i){
+        string s { to_string(rand()) };
+        string s2 = s+s;
+        string s3 = s+s+s;
+        t.insert(s3);
+        t.insert(s2);
+        HOPE_TRUE(t.query(s3));
+        HOPE_TRUE(t.query(s2));
+        t.remove(s3);
+        t.remove(s2);
+        HOPE_FALSE(t.query(s3));
+        HOPE_FALSE(t.query(s2));
+        t.insert(s);
+        HOPE_TRUE(t.query(s));
+    }
+
+    // the same with test_2
+    vector<string> words;
+    t.startswith("", words);
+    HOPE_EQ(t.word_size, words.size());
+
+    sort(words.begin(), words.end());
+    for(auto &w: words){
+        t.remove(w);
+        HOPE_FALSE(t.query(w));
+    }
+    HOPE_EQ(t.word_size, 0);
+    HOPE_EQ(t.node_size, 0);
+    HOPE_TRUE(t.root.nexts.empty());
 }
 
 
 int main() {
     test_1();
     test_2();
+    test_3();
+    cout << "Test OK!\n";
     return 0;
 }
 
