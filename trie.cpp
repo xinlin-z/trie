@@ -12,7 +12,7 @@ pair<Trie::Node*,uint32_t> Trie::get_mem(){
             avail_slot.push_back(i);
         return {pm, (msize-1)*nslot};
     }
-    
+
     uint32_t s { avail_slot[0] };
     uint32_t a { s/nslot };
     uint32_t b { s%nslot };
@@ -21,8 +21,8 @@ pair<Trie::Node*,uint32_t> Trie::get_mem(){
 }
 
 
-void Trie::del_mem(uint32_t sidx){
-    avail_slot.push_back(sidx);
+void Trie::del_mem(Trie::Node *n) noexcept{
+    avail_slot.push_back(n->sidx);
 }
 
 
@@ -84,8 +84,7 @@ void Trie::remove(string s){
     }
 
     // if it is leaf node
-    del_mem(n->sidx);
-    //delete n;
+    del_mem(n);
     --node_size;
 
     // delete nodes until the first non-leaf
@@ -101,8 +100,7 @@ void Trie::remove(string s){
             return;
         }
         else{
-            //delete n;
-            del_mem(n->sidx);
+            del_mem(n);
             --node_size;
         }
 
@@ -155,13 +153,6 @@ string Trie::lcp() noexcept{  // longest common prefix
 
 
 Trie::~Trie(){
-    /*vector<string> words;
-    words.reserve(word_size);
-    startswith("", words);
-    for(auto &w: words)
-        remove(w);
-    assert(word_size == 0);
-    assert(node_size == 0);*/
     for(auto it{mem.begin()}; it!=mem.end(); ++it)
         delete *it;
 }

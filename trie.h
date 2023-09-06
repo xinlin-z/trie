@@ -36,7 +36,7 @@ struct Trie{
     std::vector<Node*> mem;
     std::deque<uint32_t> avail_slot;
     std::pair<Node*,uint32_t> get_mem();
-    void del_mem(uint32_t sidx);
+    void del_mem(Node *n) noexcept;
 };
 
 
