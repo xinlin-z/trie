@@ -16,6 +16,7 @@ struct Trie{
         using mt = std::unordered_map<char,Node*>;
         char c;
         bool is_word { false };
+        bool is_avail { false };
         uint32_t sidx {};
         mt nexts;
         Node(char c): c{c} {}
@@ -34,6 +35,7 @@ struct Trie{
     void remove(std::string s);
     void startswith(std::string prefix, std::vector<std::string> &words);
     std::string lcp() noexcept;
+    void shrink();
 
     // memory pool
     const static uint32_t nslot { MEM_PIECE/sizeof(Node) };

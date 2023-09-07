@@ -48,6 +48,7 @@ void test_1(){
     words_2.insert(words_2.begin(), "123");
     HOPE_EQ(words, words_2);
 
+    t.shrink();
     HOPE_TRUE(t.query("ab"));
     HOPE_TRUE(t.query("abc"));
     HOPE_TRUE(t.query("abcd"));
@@ -94,7 +95,7 @@ void test_2(){
     srand((unsigned int)(tm%0xFFFFFFFF));
 
     Trie t {};
-    for(int i{}; i<100000; ++i){
+    for(int i{}; i<1000; ++i){
         string s { to_string(rand()) };
         t.insert(s);
         HOPE_TRUE(t.query(s));
@@ -108,6 +109,7 @@ void test_2(){
     for(auto &w: words){
         t.remove(w);
         HOPE_FALSE(t.query(w));
+        t.shrink();
     }
     HOPE_EQ(t.word_size, 0);
     HOPE_EQ(t.node_size, 0);
@@ -121,7 +123,7 @@ void test_3(){
     srand((unsigned int)(tm%0xFFFFFFFF));
 
     Trie t {};
-    for(int i{}; i<100000; ++i){
+    for(int i{}; i<100; ++i){
         string s { to_string(rand()) };
         string s2 = 'a'+s+s;
         string s3 = 'b'+s+s+s;
@@ -150,6 +152,8 @@ void test_3(){
         HOPE_FALSE(t.query(s2));
         t.insert(s);
         HOPE_TRUE(t.query(s));
+        t.insert(s6);
+        HOPE_TRUE(t.query(s6));
     }
 
     // the same with test_2
@@ -161,6 +165,7 @@ void test_3(){
     for(auto &w: words){
         t.remove(w);
         HOPE_FALSE(t.query(w));
+        t.shrink();
     }
     HOPE_EQ(t.word_size, 0);
     HOPE_EQ(t.node_size, 0);

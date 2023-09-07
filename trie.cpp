@@ -10,18 +10,22 @@ pair<Trie::Node*,uint32_t> Trie::get_mem(){
         uint32_t msize { (uint32_t)mem.size() };
         for(uint32_t i{(msize-1)*nslot+1}; i<msize*nslot; ++i)
             avail_slot.push_back(i);
+        for(uint32_t i{1}; i<nslot; ++i)
+            (pm+i)->is_avail = true;
         return {pm, (msize-1)*nslot};
     }
 
     uint32_t s { avail_slot[0] };
-    uint32_t a { s/nslot };
-    uint32_t b { s%nslot };
+    uint32_t a { s / nslot };
+    uint32_t b { s % nslot };
     avail_slot.pop_front();
     return {mem[a]+b, s};
 }
 
 
 void Trie::del_mem(Trie::Node *n) noexcept{
+    n->is_avail = true;
+    n->nexts.~unordered_map();
     avail_slot.push_back(n->sidx);
 }
 
@@ -152,9 +156,36 @@ string Trie::lcp() noexcept{  // longest common prefix
 }
 
 
+void Trie::shrink(){
+    // collect all words
+    vector<string> words;
+    startswith("", words);
+    // delete all memory
+    for(auto it{mem.begin()}; it!=mem.end(); ++it){
+        for(uint32_t j{}; j<nslot; ++j)
+            if((*it+j)->is_avail == false)
+                (*it+j)->nexts.~unordered_map();
+        delete[] (char*)*it;
+    }
+    // zero out
+    mem.clear();
+    avail_slot.clear();
+    word_size = 0;
+    node_size = 0;
+    root.nexts.clear();
+    // re-insert all
+    for(auto &w: words)
+        insert(w);
+}
+
+
 Trie::~Trie(){
-    for(auto it{mem.begin()}; it!=mem.end(); ++it)
-        delete *it;
+    for(auto it{mem.begin()}; it!=mem.end(); ++it){
+        for(uint32_t j{}; j<nslot; ++j)
+            if((*it+j)->is_avail == false)
+                (*it+j)->nexts.~unordered_map();
+        delete[] (char*)*it;
+    }
 }
 
 
