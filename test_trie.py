@@ -1,3 +1,4 @@
+import threading
 import random
 random.seed()
 from trie import Trie
@@ -61,6 +62,30 @@ for i,w in enumerate(words):
     assert t.word_size == len(words)-i-1
 assert t.node_size == 0
 assert t.word_size == 0
+
+
+# multithread test
+def rw_trie(s, t):
+    for i in range(1000):
+        t.remove(s)
+        assert t.query(s) is False
+        t.insert(s)
+        assert t.query(s)
+
+t = Trie()
+threads = []
+teststr = ('1234567890', 'abcdefgjkluiop', '123qweasdzxc5678rtyfghvbn',
+                '234@#$wer&*()(4578')
+for i in range(4):
+    xc = threading.Thread(target=rw_trie,
+                          args=(teststr[i],t), daemon=True);
+    xc.start()
+    threads.append(xc)
+for i in range(4):
+    threads[i].join()
+for i in range(4):
+    assert t.query(teststr[i])
+assert t.word_size == 4
 
 
 print('Test OK!')
