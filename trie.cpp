@@ -4,7 +4,7 @@ using namespace std;
 
 
 pair<Trie::Node*,uint32_t> Trie::get_mem(){
-    if(avail_slot.size() == 0){
+    if(avail_slot.empty()){
         Node *pm { (Node*)(new char[nslot*sizeof(Node)]) };
         mem.push_back(pm);
         uint32_t msize { (uint32_t)mem.size() };
@@ -15,11 +15,11 @@ pair<Trie::Node*,uint32_t> Trie::get_mem(){
         return {pm, (msize-1)*nslot};
     }
 
-    uint32_t s { avail_slot[0] };
-    uint32_t a { s / nslot };
-    uint32_t b { s % nslot };
+    uint32_t sidx { avail_slot[0] };
+    uint32_t a { sidx / nslot };
+    uint32_t b { sidx % nslot };
     avail_slot.pop_front();
-    return {mem[a]+b, s};
+    return {mem[a]+b, sidx};
 }
 
 
@@ -39,6 +39,7 @@ void Trie::insert(string s){
             auto [p,sidx] { get_mem() };
             n->nexts[c] = new(p) Node{c};
             n->nexts[c]->sidx = sidx;
+            n->nexts.reserve(4);
             ++node_size;
         }
         n = n->nexts[c];
@@ -65,7 +66,6 @@ void Trie::remove(string s){
         return;
 
     Node *n {&root};
-
     // include the root node,
     // but not include the last node.
     vector<pair<char,Node*>> path;
@@ -80,7 +80,6 @@ void Trie::remove(string s){
     }
 
     --word_size;
-
     // if the last node is not leaf
     if(!n->nexts.empty()){
         n->is_word = false;
@@ -90,14 +89,12 @@ void Trie::remove(string s){
     // if it is leaf node
     del_mem(n);
     --node_size;
-
     // delete nodes until the first non-leaf
     // or leaf but is_word
     // or root
     size_t psize { path.size() };
     while(psize > 1){
         n = path[psize-1].second;
-
         if((n->nexts.size()>1) || (n->is_word)){
             char c { path[psize-1].first };
             n->nexts.erase(c);
@@ -107,7 +104,6 @@ void Trie::remove(string s){
             del_mem(n);
             --node_size;
         }
-
         path.pop_back();
         --psize;
     }
@@ -128,18 +124,18 @@ void Trie::startswith(string prefix, vector<string> &words){
     if(n->is_word)
         words.push_back(prefix);
 
-    vector<pair<string,Node*>> states,m;
+    _states.clear();
     for(auto [c,pn]: n->nexts)
-        states.emplace_back(prefix+c, pn);
-    while(!states.empty()){
-        m.clear();
-        for(auto [s,pn]: states){
+        _states.emplace_back(prefix+c, pn);
+    while(!_states.empty()){
+        _m.clear();
+        for(auto [s,pn]: _states){
             for(auto [c,ppn]: pn->nexts)
-                m.emplace_back(s+c, ppn);
+                _m.emplace_back(s+c, ppn);
             if(pn->is_word)
                 words.push_back(s);
         }
-        swap(states, m);
+        swap(_states, _m);
     }
 }
 

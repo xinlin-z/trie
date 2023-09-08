@@ -7,11 +7,12 @@
 #include <utility>
 
 
-// memory allocated for each new
+// memory allocated for each piece
 #define MEM_PIECE  (4096*4)
 
 
 struct Trie{
+private:
     struct Node{
         using mt = std::unordered_map<char,Node*>;
         char c;
@@ -23,10 +24,10 @@ struct Trie{
     };
     static_assert(sizeof(Node) == 64);
 
+public:
     Node root {0};
     uint32_t node_size {};
     uint32_t word_size {};
-
     ~Trie();
 
     // trie interfaces
@@ -37,6 +38,10 @@ struct Trie{
     std::string lcp() noexcept;
     void shrink();
 
+private:
+    // speed up startswith
+    std::vector<std::pair<std::string,Node*>> _states;
+    std::vector<std::pair<std::string,Node*>> _m;
     // memory pool
     const static uint32_t nslot { MEM_PIECE/sizeof(Node) };
     std::vector<Node*> mem;
