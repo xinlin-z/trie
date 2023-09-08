@@ -38,7 +38,7 @@ void Trie::insert(string s){
             auto [p,sidx] { get_mem() };
             n->nexts[c] = new(p) Node{c};
             n->nexts[c]->sidx = sidx;
-            n->nexts.reserve(4);
+            n->nexts[c]->nexts.reserve(4);
             ++node_size;
         }
         n = n->nexts[c];
