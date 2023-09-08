@@ -1,3 +1,11 @@
+/*
+ * FileName: trie.h
+ * Author:   xinlin-z
+ * Desc:     Trie data structure implemented in C++,
+ *           with thread-safe and memory pool to speedup.
+ * Blog:     https://cs.pynote.net
+ * Github:   https://github.com/xinlin-z/trie
+ */
 #ifndef _TRIE_H
 #define _TRIE_H 1
 #include <string>
@@ -5,6 +13,7 @@
 #include <vector>
 #include <deque>
 #include <utility>
+#include <mutex>
 
 
 // memory allocated for each piece
@@ -44,9 +53,9 @@ public:
     void shrink();
 
 private:
-    // speed up startswith
-    std::vector<std::pair<std::string,Node*>> _states;
-    std::vector<std::pair<std::string,Node*>> _m;
+    std::mutex mutex;
+    // speedup startswith
+    std::vector<std::pair<std::string,Node*>> _states, _m;
     // memory pool
     const static uint32_t nslot { MEM_PIECE/sizeof(Node) };
     std::vector<Node*> mem;

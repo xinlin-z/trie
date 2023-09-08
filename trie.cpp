@@ -1,5 +1,12 @@
+/*
+ * FileName: trie.cpp
+ * Author:   xinlin-z
+ * Desc:     Trie data structure implemented in C++,
+ *           with thread-safe and memory pool to speedup.
+ * Blog:     https://cs.pynote.net
+ * Github:   https://github.com/xinlin-z/trie
+ */
 #include "trie.h"
-#include <cassert>
 using namespace std;
 
 
@@ -33,6 +40,7 @@ void Trie::insert(string s){
     if((s=="") || query(s))
         return;
     Node *n {&root};
+    mutex.lock();
     for(auto c: s){
         if(n->nexts.find(c) == n->nexts.end()){
             auto [p,sidx] { get_mem() };
@@ -45,18 +53,24 @@ void Trie::insert(string s){
     }
     n->is_word = true;
     ++word_size;
+    mutex.unlock();
 }
 
 
 bool Trie::query(string s) noexcept{
     Node *n {&root};
+    mutex.lock();
     auto not_found {n->nexts.end()};
     for(auto c: s){
-        if(n->nexts.find(c) == not_found)
+        if(n->nexts.find(c) == not_found){
+            mutex.unlock();
             return false;
+        }
         n = n->nexts[c];
     }
-    return n->is_word;
+    bool r = n->is_word;
+    mutex.unlock();
+    return r;
 }
 
 
@@ -70,10 +84,13 @@ void Trie::remove(string s){
     vector<pair<char,Node*>> path;
     path.reserve(s.size());
 
+    mutex.lock();
     auto not_found {n->nexts.end()};
     for(auto c: s){
-        if(n->nexts.find(c) == not_found)
+        if(n->nexts.find(c) == not_found){
+            mutex.unlock();
             return;
+        }
         path.emplace_back(c,n);
         n = n->nexts[c];
     }
@@ -82,9 +99,9 @@ void Trie::remove(string s){
     // if the last node is not leaf
     if(!n->nexts.empty()){
         n->is_word = false;
+        mutex.unlock();
         return;
     }
-
     // if it is leaf node
     del_mem(n);
     --node_size;
@@ -97,6 +114,7 @@ void Trie::remove(string s){
         if((n->nexts.size()>1) || (n->is_word)){
             char c { path[psize-1].first };
             n->nexts.erase(c);
+            mutex.unlock();
             return;
         }
         else{
@@ -109,14 +127,18 @@ void Trie::remove(string s){
 
     // if get here, erase entry in root
     root.nexts.erase(path[0].first);
+    mutex.unlock();
 }
 
 
 void Trie::startswith(string prefix, vector<string> &words){
     Node *n {&root};
+    mutex.lock();
     for(auto c: prefix){
-        if(n->nexts.find(c) == n->nexts.end())
+        if(n->nexts.find(c) == n->nexts.end()){
+            mutex.unlock();
             return;
+        }
         n = n->nexts[c];
     }
 
@@ -126,6 +148,7 @@ void Trie::startswith(string prefix, vector<string> &words){
     _states.clear();
     for(auto [c,pn]: n->nexts)
         _states.emplace_back(prefix+c, pn);
+
     while(!_states.empty()){
         _m.clear();
         for(auto [s,pn]: _states){
@@ -136,17 +159,20 @@ void Trie::startswith(string prefix, vector<string> &words){
         }
         swap(_states, _m);
     }
+    mutex.unlock();
 }
 
 
 string Trie::lcp() noexcept{  // longest common prefix
     string r;
     Node *n {&root};
+    mutex.lock();
     while((n->nexts.size()==1) && (!n->is_word)){
         char c { n->nexts.begin()->second->c };
         r += c;
         n = n->nexts[c];
     }
+    mutex.unlock();
     return r;
 }
 
@@ -155,6 +181,7 @@ void Trie::shrink(){
     // collect all words
     vector<string> words;
     startswith("", words);
+    mutex.lock();
     // delete all memory
     for(auto it{mem.begin()}; it!=mem.end(); ++it){
         for(uint32_t j{}; j<nslot; ++j)
@@ -168,7 +195,8 @@ void Trie::shrink(){
     word_size = 0;
     node_size = 0;
     root.nexts.clear();
-    // re-insert all
+    // unlock here
+    mutex.unlock();
     for(auto &w: words)
         insert(w);
 }

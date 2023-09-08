@@ -5,6 +5,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <string>
+#include <thread>
 using namespace std;
 
 
@@ -173,10 +174,43 @@ void test_3(){
 }
 
 
+void _rw_trie(string s, Trie &t){
+    for(int i{}; i<100000; ++i){
+        t.remove(s);
+        HOPE_FALSE(t.query(s));
+        t.insert(s);
+        HOPE_TRUE(t.query(s));
+    }
+}
+
+
+void test_4(){
+    Trie t;
+    string s1 {"1234567890"};
+    string s2 {"abcdefghij"};
+    string s3 { s1+s2 };
+    string s4 { s3+s1 };
+    thread t1(_rw_trie, s1, ref(t));
+    thread t2(_rw_trie, s2, ref(t));
+    thread t3(_rw_trie, s3, ref(t));
+    thread t4(_rw_trie, s4, ref(t));
+    t1.join();
+    t2.join();
+    t3.join();
+    t4.join();
+    HOPE_TRUE(t.query(s1));
+    HOPE_TRUE(t.query(s2));
+    HOPE_TRUE(t.query(s3));
+    HOPE_TRUE(t.query(s4));
+    HOPE_EQ(t.word_size, 4);
+}
+
+
 int main() {
     test_1();
     test_2();
     test_3();
+    test_4();
     cout << "Test OK!\n";
     return 0;
 }
