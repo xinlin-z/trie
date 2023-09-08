@@ -36,7 +36,8 @@ class Trie():
                 if c not in n.nexts:
                     return False
                 n = n.nexts[c]
-            return n.is_word
+            r = n.is_word
+        return r
 
     def startswith(self, prefix: str) -> list[str]:
         """ non-recursive, inspired by Thompson NFA multi-state algo """
