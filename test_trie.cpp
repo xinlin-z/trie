@@ -123,7 +123,7 @@ void test_3(){
     srand((unsigned int)(tm%0xFFFFFFFF));
 
     Trie t {};
-    for(int i{}; i<100; ++i){
+    for(int i{}; i<200; ++i){
         string s { to_string(rand()) };
         string s2 = 'a'+s+s;
         string s3 = 'b'+s+s+s;

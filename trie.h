@@ -20,7 +20,13 @@ private:
         bool is_avail { false };
         uint32_t sidx {};
         mt nexts;
+
         Node(char c): c{c} {}
+        // The memory allocated by nexts while runing
+        // would be freed when destructor is called.
+        // Otherwise, nexts.~unordered_map must be 
+        // invoked explicitly.
+        ~Node(){ is_avail = true; }
     };
     static_assert(sizeof(Node) == 64);
 
@@ -29,7 +35,6 @@ public:
     uint32_t node_size {};
     uint32_t word_size {};
     ~Trie();
-
     // trie interfaces
     void insert(std::string s);
     bool query(std::string s) noexcept;

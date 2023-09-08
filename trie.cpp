@@ -24,8 +24,7 @@ pair<Trie::Node*,uint32_t> Trie::get_mem(){
 
 
 void Trie::del_mem(Trie::Node *n) noexcept{
-    n->is_avail = true;
-    n->nexts.~unordered_map();
+    n->~Node();
     avail_slot.push_back(n->sidx);
 }
 
