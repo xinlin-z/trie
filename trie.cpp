@@ -40,7 +40,7 @@ void Trie::insert(string s){
     if((s=="") || query(s))
         return;
     Node *n {&root};
-    mutex.lock();
+    mtx.lock();
     for(auto c: s){
         if(n->nexts.find(c) == n->nexts.end()){
             auto [p,sidx] { get_mem() };
@@ -53,23 +53,23 @@ void Trie::insert(string s){
     }
     n->is_word = true;
     ++word_size;
-    mutex.unlock();
+    mtx.unlock();
 }
 
 
 bool Trie::query(string s) noexcept{
     Node *n {&root};
-    mutex.lock();
+    mtx.lock();
     auto not_found {n->nexts.end()};
     for(auto c: s){
         if(n->nexts.find(c) == not_found){
-            mutex.unlock();
+            mtx.unlock();
             return false;
         }
         n = n->nexts[c];
     }
     bool r = n->is_word;
-    mutex.unlock();
+    mtx.unlock();
     return r;
 }
 
@@ -84,11 +84,11 @@ void Trie::remove(string s){
     vector<pair<char,Node*>> path;
     path.reserve(s.size());
 
-    mutex.lock();
+    mtx.lock();
     auto not_found {n->nexts.end()};
     for(auto c: s){
         if(n->nexts.find(c) == not_found){
-            mutex.unlock();
+            mtx.unlock();
             return;
         }
         path.emplace_back(c,n);
@@ -99,7 +99,7 @@ void Trie::remove(string s){
     // if the last node is not leaf
     if(!n->nexts.empty()){
         n->is_word = false;
-        mutex.unlock();
+        mtx.unlock();
         return;
     }
     // if it is leaf node
@@ -114,7 +114,7 @@ void Trie::remove(string s){
         if((n->nexts.size()>1) || (n->is_word)){
             char c { path[psize-1].first };
             n->nexts.erase(c);
-            mutex.unlock();
+            mtx.unlock();
             return;
         }
         else{
@@ -127,16 +127,16 @@ void Trie::remove(string s){
 
     // if get here, erase entry in root
     root.nexts.erase(path[0].first);
-    mutex.unlock();
+    mtx.unlock();
 }
 
 
 void Trie::startswith(string prefix, vector<string> &words){
     Node *n {&root};
-    mutex.lock();
+    mtx.lock();
     for(auto c: prefix){
         if(n->nexts.find(c) == n->nexts.end()){
-            mutex.unlock();
+            mtx.unlock();
             return;
         }
         n = n->nexts[c];
@@ -159,29 +159,30 @@ void Trie::startswith(string prefix, vector<string> &words){
         }
         swap(_states, _m);
     }
-    mutex.unlock();
+    mtx.unlock();
 }
 
 
 string Trie::lcp() noexcept{  // longest common prefix
     string r;
     Node *n {&root};
-    mutex.lock();
+    mtx.lock();
     while((n->nexts.size()==1) && (!n->is_word)){
         char c { n->nexts.begin()->second->c };
         r += c;
         n = n->nexts[c];
     }
-    mutex.unlock();
+    mtx.unlock();
     return r;
 }
 
 
 void Trie::shrink(){
+    // mtx is recursive mutex
+    mtx.lock();
     // collect all words
     vector<string> words;
     startswith("", words);
-    mutex.lock();
     // delete all memory
     for(auto it{mem.begin()}; it!=mem.end(); ++it){
         for(uint32_t j{}; j<nslot; ++j)
@@ -196,9 +197,9 @@ void Trie::shrink(){
     node_size = 0;
     root.nexts.clear();
     // unlock here
-    mutex.unlock();
     for(auto &w: words)
         insert(w);
+    mtx.unlock();
 }
 
 

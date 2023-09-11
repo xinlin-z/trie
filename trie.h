@@ -53,7 +53,7 @@ public:
     void shrink();
 
 private:
-    std::mutex mutex;
+    std::recursive_mutex mtx;
     // speedup startswith
     std::vector<std::pair<std::string,Node*>> _states, _m;
     // memory pool

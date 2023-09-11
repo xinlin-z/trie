@@ -175,10 +175,12 @@ void test_3(){
 
 
 void _rw_trie(string s, Trie &t){
-    for(int i{}; i<100000; ++i){
+    for(int i{}; i<10000; ++i){
         t.remove(s);
         HOPE_FALSE(t.query(s));
         t.insert(s);
+        HOPE_TRUE(t.query(s));
+        t.shrink();
         HOPE_TRUE(t.query(s));
     }
 }
