@@ -16,7 +16,10 @@ class Trie():
         self.m = threading.Lock()
 
     def __len__(self) -> int:
-        return self.word_size
+        size = 0
+        with self.m:
+            size = self.word_size
+        return size
 
     def insert(self, word: str) -> None:
         if self.query(word) or word=='':
@@ -100,6 +103,6 @@ class Trie():
             while len(n.nexts)==1 and not n.is_word:
                 n = tuple(n.nexts.values())[0]
                 r += n.v
-            return r
+        return r
 
 
