@@ -15,6 +15,9 @@ class Trie():
         self.node_size = 0
         self.m = threading.Lock()
 
+    def __len__(self) -> int:
+        return self.word_size
+
     def insert(self, word: str) -> None:
         if self.query(word) or word=='':
             return

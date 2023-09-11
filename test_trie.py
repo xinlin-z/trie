@@ -16,7 +16,7 @@ assert t.query('123') is False
 assert t.query('') is False
 assert t.lcp() == 'a'
 assert t.node_size == 10
-assert t.word_size == 6
+assert len(t) == 6
 
 t.insert('cs.pynote.net')
 words.append('cs.pynote.net')
@@ -25,7 +25,7 @@ words.append('123456')
 t.insert('happy coding')
 words.append('happy coding')
 assert len(t.lcp()) == 0
-assert t.word_size == 9
+assert len(t) == 9
 
 
 words.remove('abc')
@@ -37,7 +37,7 @@ for w in words2:
     words.remove(w)
     assert sorted(t.startswith('')) == sorted(words)
 assert t.node_size == 0
-assert t.word_size == 0
+assert len(t) == 0
 
 
 # stress test
@@ -48,7 +48,7 @@ for i in range(n):
     t.insert(s)
     assert t.query(s)
 words = t.startswith('')
-assert len(words) == t.word_size
+assert len(words) == len(t)
 
 ks = ('1','2','3','4','5','6','7','8','9')
 for k in ks:
@@ -59,9 +59,9 @@ random.shuffle(words)
 for i,w in enumerate(words):
     t.remove(w)
     assert t.query(w) is False
-    assert t.word_size == len(words)-i-1
+    assert len(t) == len(words)-i-1
 assert t.node_size == 0
-assert t.word_size == 0
+assert len(t) == 0
 
 
 # multithread test
@@ -85,7 +85,7 @@ for i in range(4):
     threads[i].join()
 for i in range(4):
     assert t.query(teststr[i])
-assert t.word_size == 4
+assert len(t) == 4
 
 
 print('Test OK!')
