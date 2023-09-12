@@ -56,6 +56,7 @@ public:
     void startswith(std::string prefix, std::vector<std::string> &words);
     std::string lcp() noexcept;
     void shrink();
+    uint32_t get_word_size() noexcept;
 
 private:
     std::recursive_mutex mtx;
