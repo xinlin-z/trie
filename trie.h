@@ -43,6 +43,7 @@ private:
         }
     };
     static_assert(sizeof(Node) == 16);
+    static_assert(MEM_PIECE%sizeof(Node) == 0);
     uint32_t node_size {};
     uint32_t word_size {};
 
