@@ -86,7 +86,7 @@ void test_1(){
     HOPE_FALSE(t.query("123"));
     HOPE_EQ(t.word_size, 0);
     HOPE_EQ(t.node_size, 0);
-    HOPE_TRUE(t.root.nexts.empty());
+    HOPE_TRUE(t.root.nexts->empty());
 }
 
 
@@ -114,7 +114,7 @@ void test_2(){
     }
     HOPE_EQ(t.word_size, 0);
     HOPE_EQ(t.node_size, 0);
-    HOPE_TRUE(t.root.nexts.empty());
+    HOPE_TRUE(t.root.nexts->empty());
 }
 
 
@@ -170,7 +170,7 @@ void test_3(){
     }
     HOPE_EQ(t.word_size, 0);
     HOPE_EQ(t.node_size, 0);
-    HOPE_TRUE(t.root.nexts.empty());
+    HOPE_TRUE(t.root.nexts->empty());
 }
 
 

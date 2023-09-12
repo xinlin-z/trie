@@ -17,7 +17,7 @@
 
 
 // memory allocated for each piece
-#define MEM_PIECE  (4096*4)
+#define MEM_PIECE  4096
 
 
 struct Trie{
@@ -28,16 +28,21 @@ private:
         bool is_word { false };
         bool is_avail { false };
         uint32_t sidx {};
-        mt nexts;
+        // sizeof(mt) is not fixed cross platform,
+        // so here we can only use pointer, which sizeof is fixed
+        // in all 64bit environment.
+        mt *nexts;
 
-        Node(char c): c{c} {}
-        // The memory allocated by nexts while runing
-        // would be freed when destructor is called.
-        // Otherwise, nexts.~unordered_map must be 
-        // invoked explicitly.
-        ~Node(){ is_avail = true; }
+        Node(char c): c{c}{
+            nexts = new mt;
+            // pre-allocate 4 buckets for a little speedup
+            nexts->reserve(4);
+        }
+        ~Node(){
+            delete nexts;
+        }
     };
-    static_assert(sizeof(Node) == 64);
+    static_assert(sizeof(Node) == 16);
 
 public:
     Node root {0};
