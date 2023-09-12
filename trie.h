@@ -43,11 +43,11 @@ private:
         }
     };
     static_assert(sizeof(Node) == 16);
+    uint32_t node_size {};
     uint32_t word_size {};
 
 public:
     Node root {0};
-    uint32_t node_size {};
     ~Trie();
     // trie interfaces
     void insert(std::string s);
@@ -56,6 +56,7 @@ public:
     void startswith(std::string prefix, std::vector<std::string> &words);
     std::string lcp() noexcept;
     void shrink();
+    uint32_t get_node_size() noexcept;
     uint32_t get_word_size() noexcept;
 
 private:

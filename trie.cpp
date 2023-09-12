@@ -218,6 +218,14 @@ Trie::~Trie(){
 }
 
 
+uint32_t Trie::get_node_size() noexcept{
+    mtx.lock();
+    uint32_t r { node_size };
+    mtx.unlock();
+    return r;
+}
+
+
 uint32_t Trie::get_word_size() noexcept{
     mtx.lock();
     uint32_t r { word_size };

@@ -57,35 +57,35 @@ void test_1(){
     HOPE_TRUE(t.query("123"));
     HOPE_FALSE(t.query("1234"));
     HOPE_EQ(t.get_word_size(), 4);
-    HOPE_EQ(t.node_size, 7);
+    HOPE_EQ(t.get_node_size(), 7);
 
     t.remove("abc");
     HOPE_FALSE(t.query("abc"));
     HOPE_EQ(t.get_word_size(), 3);
-    HOPE_EQ(t.node_size, 7);
+    HOPE_EQ(t.get_node_size(), 7);
     t.remove("abcd");
     HOPE_FALSE(t.query("abcd"));
     HOPE_EQ(t.get_word_size(), 2);
-    HOPE_EQ(t.node_size, 5);
+    HOPE_EQ(t.get_node_size(), 5);
     t.remove("ab");
     HOPE_FALSE(t.query("ab"));
     HOPE_EQ(t.get_word_size(), 1);
-    HOPE_EQ(t.node_size, 3);
+    HOPE_EQ(t.get_node_size(), 3);
     t.insert("f");
     HOPE_TRUE(t.query("f"));
     HOPE_EQ(t.get_word_size(), 2);
-    HOPE_EQ(t.node_size, 4);
+    HOPE_EQ(t.get_node_size(), 4);
     t.remove("f");
     HOPE_FALSE(t.query("f"));
     HOPE_EQ(t.get_word_size(), 1);
-    HOPE_EQ(t.node_size, 3);
+    HOPE_EQ(t.get_node_size(), 3);
     t.remove("kkk");
     HOPE_EQ(t.get_word_size(), 1);
-    HOPE_EQ(t.node_size, 3);
+    HOPE_EQ(t.get_node_size(), 3);
     t.remove("123");
     HOPE_FALSE(t.query("123"));
     HOPE_EQ(t.get_word_size(), 0);
-    HOPE_EQ(t.node_size, 0);
+    HOPE_EQ(t.get_node_size(), 0);
     HOPE_TRUE(t.root.nexts->empty());
 }
 
@@ -113,7 +113,7 @@ void test_2(){
         t.shrink();
     }
     HOPE_EQ(t.get_word_size(), 0);
-    HOPE_EQ(t.node_size, 0);
+    HOPE_EQ(t.get_node_size(), 0);
     HOPE_TRUE(t.root.nexts->empty());
 }
 
@@ -169,7 +169,7 @@ void test_3(){
         t.shrink();
     }
     HOPE_EQ(t.get_word_size(), 0);
-    HOPE_EQ(t.node_size, 0);
+    HOPE_EQ(t.get_node_size(), 0);
     HOPE_TRUE(t.root.nexts->empty());
 }
 
