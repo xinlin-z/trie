@@ -43,11 +43,11 @@ private:
         }
     };
     static_assert(sizeof(Node) == 16);
+    uint32_t word_size {};
 
 public:
     Node root {0};
     uint32_t node_size {};
-    uint32_t word_size {};
     ~Trie();
     // trie interfaces
     void insert(std::string s);
