@@ -23,24 +23,18 @@
 struct Trie{
 private:
     struct Node{
-        using mt = std::unordered_map<char,Node*>;
+        using ump_t = std::unordered_map<char,Node*>;
         char c;
         bool is_word { false };
         bool is_avail { false };
         uint32_t sidx {};
-        // sizeof(mt) is not fixed cross platform,
+        // sizeof(ump_t) is not fixed cross platform,
         // so here we can only use pointer, which sizeof is fixed
         // in all 64bit environment.
-        mt *nexts;
+        ump_t *nexts;
 
-        Node(char c): c{c}{
-            nexts = new mt;
-            // pre-allocate 4 buckets for a little speedup
-            nexts->reserve(4);
-        }
-        ~Node(){
-            delete nexts;
-        }
+        Node(char c);
+        ~Node();
     };
     static_assert(sizeof(Node) == 16);
     static_assert(MEM_PIECE%sizeof(Node) == 0);
@@ -49,6 +43,7 @@ private:
 
 public:
     Node root {0};
+    Trie();
     ~Trie();
     // trie interfaces
     void insert(std::string s);

@@ -11,6 +11,22 @@
 using namespace std;
 
 
+Trie::Trie(){
+    root.nexts->reserve(256);
+}
+
+
+Trie::Node::Node(char c): c{c}{
+    nexts = new ump_t;
+    nexts->reserve(4);
+}
+
+
+Trie::Node::~Node(){
+    delete nexts;
+}
+
+
 pair<Trie::Node*,uint32_t> Trie::get_mem(){
     if(avail_slot.empty()){
         Node *pm { (Node*)(new char[nslot*sizeof(Node)]) };
